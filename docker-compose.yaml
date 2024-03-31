@@ -7,7 +7,10 @@ volumes:
 services:
   pihole:
     container_name: pihole
-    image: fabianbees/pihole-unbound:beta
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/lizenzfass78851/docker-pihole-unbound:latest
     hostname: ${HOSTNAME}
     domainname: ${DOMAIN_NAME}
     ports:
