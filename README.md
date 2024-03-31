@@ -18,10 +18,9 @@ docker run -d \
   -e TZ="Europe/Berlin" \
   -e 'TCP_PORT_53'='53' -e 'UDP_PORT_53'='53' -e 'UDP_PORT_67'='67' -e 'TCP_PORT_80'='80' -e 'TCP_PORT_443'='443' \
   -e 'TZ'='Europe/Berlin' \
-  -e 'WEBPASSWORD'='******' \
+  -e 'FTLCONF_webserver_api_password'='******' \
   -v "$PWD/pihole/pihole/":'/etc/pihole/':'rw' \
   -v "$PWD/pihole/dnsmasq.d/":'/etc/dnsmasq.d/':'rw' \
-  -v "$PWD/pihole/external.conf":'/etc/lighttpd/external.conf':'rw' \
   --cap-add=NET_ADMIN \
   --hostname=pihole \
   'fabianbees/pihole-unbound:latest'
@@ -36,7 +35,7 @@ docker run -d \
 | --- | --- |
 | `ServerIP: <Host's IP>`<br/> | **--net=host mode requires** Set to your server's LAN IP, used by web block modes and lighttpd bind address
 | `TZ: <Timezone>`<br/> | Set your [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) to make sure logs rotate at local midnight instead of at UTC midnight.
-| `WEBPASSWORD: <Admin password>`<br/> | http://pi.hole/admin password. Run `docker logs pihole \| grep random` to find your random pass.
+| `FTLCONF_webserver_api_password: <Admin password>`<br/> | http://pi.hole/admin password. Run `docker logs pihole \| grep random` to find your random pass.
 | `REV_SERVER: <"true"\|"false">`<br/> | Enable DNS conditional forwarding for device name resolution
 | `REV_SERVER_DOMAIN: <Network Domain>`<br/> | If conditional forwarding is enabled, set the domain of the local network router
 | `REV_SERVER_TARGET: <Router's IP>`<br/> | If conditional forwarding is enabled, set the IP of the local network router
@@ -48,7 +47,7 @@ Example `.env` file in the same directory as your `docker-compose.yaml` file:
 ```
 ServerIP=192.168.1.10
 TZ=America/Los_Angeles
-WEBPASSWORD=QWERTY123456asdfASDF
+FTLCONF_webserver_api_password=QWERTY123456asdfASDF
 REV_SERVER=true
 REV_SERVER_DOMAIN=local
 REV_SERVER_TARGET=192.168.1.1

@@ -20,7 +20,7 @@ services:
     environment:
       - ServerIP: ${ServerIP}
       - TZ: ${TZ}
-      - FTLCONF_webserver_api_password: ${WEBPASSWORD}
+      - FTLCONF_webserver_api_password: ${FTLCONF_webserver_api_password}
       - REV_SERVER: ${REV_SERVER}
       - REV_SERVER_TARGET: ${REV_SERVER_TARGET}
       - REV_SERVER_DOMAIN: ${REV_SERVER_DOMAIN}
