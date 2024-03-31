@@ -6,6 +6,17 @@ This Docker deployment runs both Pi-Hole and Unbound in a single container.
 
 The base image for the container is the [official Pi-Hole container](https://hub.docker.com/r/pihole/pihole), with an extra build step added to install the Unbound resolver directly into to the container based on [instructions provided directly by the Pi-Hole team](https://docs.pi-hole.net/guides/unbound/).
 
+# Tags
+
+| Image | Tag | Build |
+|:------------------:|:--------------:|:-----------------:|
+| ghcr.io/lizenzfass78851/docker-pihole-unbound | stable | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=stable)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) |
+| ghcr.io/lizenzfass78851/docker-pihole-unbound | beta | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=beta)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) |
+
+- Matrix Build State
+
+[![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image-matrix.yml/badge.svg)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image-matrix.yml)
+
 ## Usage
 
 First create a `.env` file to substitute variables for your deployment. 
@@ -24,7 +35,7 @@ docker run -d \
   -v "$PWD/pihole/external.conf":'/etc/lighttpd/external.conf':'rw' \
   --cap-add=NET_ADMIN \
   --hostname=pihole \
-  'fabianbees/pihole-unbound:latest'
+  'ghcr.io/lizenzfass78851/docker-pihole-unbound:latest'
 ```
 
 
