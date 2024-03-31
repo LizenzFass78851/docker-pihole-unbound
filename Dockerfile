@@ -1,7 +1,4 @@
-# set version label
-ARG BASE_VERSION
-
-FROM pihole/pihole:"${BASE_VERSION}"
+FROM pihole/pihole:development-v6
 RUN apk add --no-cache \
     unbound
 
