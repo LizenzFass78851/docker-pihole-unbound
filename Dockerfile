@@ -1,7 +1,4 @@
-# set version label
-ARG BASE_VERSION
-
-FROM pihole/pihole:"${BASE_VERSION}"
+FROM pihole/pihole:2024.07.0
 RUN apt update && apt install -y unbound && \
   rm -rf /var/cache/apt /var/lib/apt/lists
 
