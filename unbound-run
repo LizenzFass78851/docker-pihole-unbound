@@ -1,4 +1,4 @@
-#!/command/with-contenv bash
+#!/bin/bash
 
 # set num-threads for unbound matching the running machine
 sed -i "s/num-threads: 1/num-threads: $(nproc --all)/" /etc/unbound/unbound.conf.d/pi-hole.conf
@@ -7,7 +7,7 @@ if [ "$USE_IPV6" == "true" ]; then
 fi
 
 
-s6-echo "Starting unbound"
+echo "Starting unbound"
 
 NAME="unbound"
 DESC="DNS server"
