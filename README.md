@@ -33,7 +33,7 @@ docker run -d \
 
 | Docker Environment Var | Description|
 | --- | --- |
-| `ServerIP: <Host's IP>`<br/> | **--net=host mode requires** Set to your server's LAN IP, used by web block modes and lighttpd bind address
+| `FTLCONF_LOCAL_IPV4: <Host's IP>`<br/> | **--net=host mode requires** Set to your server's LAN IP, used by web block modes and lighttpd bind address
 | `TZ: <Timezone>`<br/> | Set your [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) to make sure logs rotate at local midnight instead of at UTC midnight.
 | `FTLCONF_webserver_api_password: <Admin password>`<br/> | http://pi.hole/admin password. Run `docker logs pihole \| grep random` to find your random pass.
 | `REV_SERVER: <"true"\|"false">`<br/> | Enable DNS conditional forwarding for device name resolution
@@ -45,7 +45,7 @@ docker run -d \
 Example `.env` file in the same directory as your `docker-compose.yaml` file:
 
 ```
-ServerIP=192.168.1.10
+FTLCONF_LOCAL_IPV4=192.168.1.10
 TZ=America/Los_Angeles
 FTLCONF_webserver_api_password=QWERTY123456asdfASDF
 REV_SERVER=true
