@@ -21,7 +21,6 @@ services:
       - TZ=${TZ}
       - FTLCONF_webserver_api_password=${FTLCONF_webserver_api_password}
       - FTLCONF_dns_revServers=${FTLCONF_dns_revServers}
- #     - PIHOLE_DNS_: 127.0.0.1#5335 # Hardcoded to our Unbound server
       - FTLCONF_dns_upstreams=127.0.0.1#5335
       - FTLCONF_dns_dnssec="true" # Enable DNSSEC
     volumes:
