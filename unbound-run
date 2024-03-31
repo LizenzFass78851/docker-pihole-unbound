@@ -1,9 +1,11 @@
 #!/bin/bash
 
+UNBOUND_CONF="/etc/unbound/unbound.conf.d/pi-hole.conf"
+
 # set num-threads for unbound matching the running machine
-sed -i "s/num-threads: 1/num-threads: $(nproc --all)/" /etc/unbound/unbound.conf.d/pi-hole.conf
+sed -i "s/num-threads: 1/num-threads: $(nproc --all)/" $UNBOUND_CONF
 if [ "$USE_IPV6" == "true" ]; then
-    sed -i "s/do-ip6: no/do-ip6: yes/" /etc/unbound/unbound.conf.d/pi-hole.conf
+    sed -i "s/do-ip6: no/do-ip6: yes/" $UNBOUND_CONF
 fi
 
 
@@ -21,10 +23,6 @@ test -x $DAEMON || exit 0
 # Override this variable by editing or creating /etc/default/unbound.
 DAEMON_OPTS=""
 
-if [ -f /etc/default/unbound ]; then
-    . /etc/default/unbound
-fi
-
 $ANCHOR -v
 
-$DAEMON -d $DAEMON_OPTS
+$DAEMON -d $DAEMON_OPTS -c $UNBOUND_CONF
