@@ -1,31 +1,30 @@
-#!/command/with-contenv bash
+#!/bin/bash -e
 
-# set num-threads for unbound matching the running machine
-sed -i "s/num-threads: 1/num-threads: $(nproc)/" /etc/unbound/unbound.conf.d/pi-hole.conf
-if [ "$USE_IPV6" == "true" ]; then
-    sed -i "s/do-ip6: no/do-ip6: yes/" /etc/unbound/unbound.conf.d/pi-hole.conf
-fi
+UNBOUND_CONF="/etc/unbound/unbound.conf.d/pi-hole.conf"
 
-
-s6-echo "Starting unbound"
-
-NAME="unbound"
-DESC="DNS server"
 DAEMON="/usr/sbin/unbound"
-PIDFILE="/run/unbound.pid"
-
-HELPER="/usr/lib/unbound/package-helper"
-
-test -x $DAEMON || exit 0
-
-# Override this variable by editing or creating /etc/default/unbound.
 DAEMON_OPTS=""
 
-if [ -f /etc/default/unbound ]; then
-    . /etc/default/unbound
+ANCHOR="/usr/sbin/unbound-anchor"
+
+PIHOLE="/usr/bin/start.sh"
+
+# ----------------------------------------------------------------
+
+# set num-threads for unbound matching the running machine
+sed -i "s/num-threads: 1/num-threads: $(nproc)/" $UNBOUND_CONF
+if [ "$USE_IPV6" == "true" ]; then
+    sed -i "s/do-ip6: no/do-ip6: yes/" $UNBOUND_CONF
 fi
 
-$HELPER chroot_setup
-$HELPER root_trust_anchor_update 2>&1 | logger -p daemon.info -t unbound-anchor
 
-$DAEMON -d $DAEMON_OPTS
+echo starting unbound
+$ANCHOR -v
+$DAEMON -d $DAEMON_OPTS -c $UNBOUND_CONF &
+
+
+echo starting pihole
+$PIHOLE
+
+
+exec "$@"
