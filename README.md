@@ -77,3 +77,57 @@ docker-compose up -d
 ```
 
 > If using Portainer, just paste the `docker-compose.yaml` contents into the stack config and add your *environment variables* directly in the UI.
+
+-----
+
+### Alternative variant
+There is also a variant of docker-pihole-unbound that works with separate containers
+
+<details>
+  <summary>docker-compose.yml</summary>
+
+```yaml
+version: '2'
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:development # <- update image version here, see: https://github.com/pi-hole/docker-pi-hole/releases
+    ports:
+      - 53:53/tcp   # DNS
+      - 53:53/udp   # DNS
+      - 80:80/tcp   # HTTP
+      - 443:443/tcp # HTTPS
+    environment:
+      - TZ=${TZ}
+      - FTLCONF_webserver_api_password=${FTLCONF_webserver_api_password}
+      - FTLCONF_dns_revServers=${FTLCONF_dns_revServers}
+      - FTLCONF_dns_upstreams=unbound # Hardcoded to our Unbound server
+      - FTLCONF_dns_dnssec=true # Enable DNSSEC
+    volumes:
+      - etc_pihole:/etc/pihole:rw
+      - etc_pihole_dnsmasq:/etc/dnsmasq.d:rw
+    networks:
+      - pihole-unbound
+    restart: unless-stopped
+    depends_on:
+      - unbound
+
+  unbound:
+    container_name: unbound
+    image: mvance/unbound:latest
+    networks:
+      - pihole-unbound
+    restart: unless-stopped
+
+networks:
+  pihole-unbound:
+
+volumes:
+  etc_pihole:
+  etc_pihole_dnsmasq:
+```
+
+</details>
+
+The variant with the `docker-compose.yml` example there is a 2-container solution, which is also shown on the [pihole discourse forum](https://discourse.pi-hole.net/t/pihole-v6-unbound-in-one-docker-container/70091/5) with the type and white connection between the containers (without manual IP's between the containers) declared has also been confirmed.
