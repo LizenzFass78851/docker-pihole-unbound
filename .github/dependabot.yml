@@ -1,0 +1,17 @@
+version: 2
+updates:
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: saturday
+      time: "09:00"
+    target-branch: beta
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "15:00"
+    target-branch: stable
