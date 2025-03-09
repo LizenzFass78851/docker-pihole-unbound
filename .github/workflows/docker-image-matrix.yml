@@ -11,12 +11,12 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build_amd64_arm64_arm:
+  build_amd64:
     strategy:
       fail-fast: false
       matrix:
         target: ["stable", "oldstable", "beta"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -27,13 +27,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ matrix.target }}
-
-      - name: Setup QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v3
-        with:
-          image: tonistiigi/binfmt:qemu-v7.0.0-28
-          platforms: all
       
       - name: Setup Docker Buildx
         id: buildx
@@ -53,7 +46,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ startsWith(env.TARGET_BRANCH, 'refs/heads/stable') }}
+            latest=false
+            prefix=amd64-,onlatest=true
           tags: ${{ matrix.target }}
 
       - name: Build and push main Docker image
@@ -63,9 +57,106 @@ jobs:
           build-args: GH_TOKEN=${{ github.token }}
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64
           cache-to: type=gha,mode=max,ignore-error=true
           cache-from: type=gha
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  build_arm:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["stable", "oldstable", "beta"]
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Dockerfile
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.target }}
+      
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        id: ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
+            prefix=arm-,onlatest=true
+          tags: ${{ matrix.target }}
+
+      - name: Build and push main Docker image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          build-args: GH_TOKEN=${{ github.token }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64,linux/arm/v7
+          cache-to: type=gha,mode=max,ignore-error=true
+          cache-from: type=gha
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+
+  merge_manifests:
+    needs: [build_amd64, build_arm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read 
+      packages: write
+    steps:
+      - name: Login to GitHub Container Registry
+        id: ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+
+      - name: Create and push manifest list
+        env:
+          DOCKER_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          TAGS: 'stable oldstable beta'
+          LATEST: 'stable'
+        run: |
+          DOCKER_IMAGE_LOWERCASE=$(echo "${DOCKER_IMAGE}" | tr '[:upper:]' '[:lower:]')
+          manifest_tags_all="${TAGS}"
+
+          if [[ "${{ github.ref_name }}" == "${LATEST}" ]]; then
+            manifest_tags_latest="latest"
+          else
+            manifest_tags_latest=""
+          fi
+
+          for tag in $manifest_tags_all; do
+            docker buildx imagetools create -t ${DOCKER_IMAGE_LOWERCASE}:${tag} \
+              ${DOCKER_IMAGE_LOWERCASE}:amd64-${tag} \
+              ${DOCKER_IMAGE_LOWERCASE}:arm-${tag} 
+          done
+
+          for tag in $manifest_tags_latest; do
+            docker buildx imagetools create -t ${DOCKER_IMAGE_LOWERCASE}:${tag} \
+              ${DOCKER_IMAGE_LOWERCASE}:amd64-${LATEST} \
+              ${DOCKER_IMAGE_LOWERCASE}:arm-${LATEST} 
+          done
+
