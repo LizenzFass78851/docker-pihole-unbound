@@ -20,8 +20,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    env:
-      TARGET_BRANCH: refs/heads/${{ matrix.target }}
 
     steps:
       - name: Checkout Dockerfile
