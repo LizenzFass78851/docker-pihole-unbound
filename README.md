@@ -92,7 +92,10 @@ version: '2'
 services:
   pihole:
     container_name: pihole
-    image: pihole/pihole:2025.04.0 # <- update image version here, see: https://github.com/pi-hole/docker-pi-hole/releases
+    # Check https://github.com/pi-hole/docker-pi-hole/releases
+    # to see if there is a newer version than the one tagged here and use that.
+    # Using 'latest' as a tag is at your own risk regarding "breaking changes".
+    image: pihole/pihole:latest
     ports:
       - 53:53/tcp   # DNS
       - 53:53/udp   # DNS
