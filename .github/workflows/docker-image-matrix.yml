@@ -28,11 +28,22 @@ jobs:
         with:
           ref: ${{ matrix.target }}
 
+      - name: Determine QEMU Tag
+        id: determine-qemu-tag
+        run: |
+          echo "qemu_tag=latest" >> $GITHUB_OUTPUT
+          if [ -e Dockerfile ]; then
+            DOCKERFILE_TAG=$(grep -oP '(?<=^FROM pihole/pihole:).*' Dockerfile)
+            if [[ "$DOCKERFILE_TAG" < "2024.07.00" ]]; then
+              echo "qemu_tag=qemu-v7.0.0-28" >> $GITHUB_OUTPUT
+            fi
+          fi
+
       - name: Setup QEMU
         id: qemu
         uses: docker/setup-qemu-action@v3
         with:
-          image: tonistiigi/binfmt:latest
+          image: tonistiigi/binfmt:${{ steps.determine-qemu-tag.outputs.qemu_tag }}
           platforms: all
       
       - name: Setup Docker Buildx
