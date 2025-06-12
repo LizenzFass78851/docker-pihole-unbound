@@ -1,4 +1,4 @@
-FROM pihole/pihole:2025.06.1
+FROM pihole/pihole:2025.06.2
 RUN apk add --no-cache \
     unbound
 
