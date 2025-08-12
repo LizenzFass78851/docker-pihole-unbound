@@ -2,9 +2,11 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [ "stable", "beta" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "stable", "beta" ]
+    branches: [ "main" ]
+  schedule:
+    - cron: '20 14 * * 2'
   workflow_dispatch:
 
 concurrency:
@@ -25,6 +27,15 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: stable
+            latest: true
+          - target: beta
+            latest: false
 
     permissions:
       contents: read
@@ -54,13 +65,16 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=${{ github.ref_name == 'stable' }}
+            latest=${{ matrix.latest }}
+          tags: ${{ matrix.target }}
 
       - name: Build and push main Docker image
         id: build
         uses: docker/build-push-action@v7
         with:
-          build-args: GH_TOKEN=${{ github.token }}
+          build-args: |
+            GH_TOKEN=${{ github.token }}
+            BUILD_CHANNEL=${{ matrix.target }}
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6,linux/riscv64

@@ -1,4 +1,7 @@
-FROM pihole/pihole:nightly
+ARG BUILD_CHANNEL=stable
+
+FROM pihole/pihole:2026.07.2 AS stable
+FROM pihole/pihole:nightly   AS beta
 
 RUN apk add --no-cache \
     unbound openssl

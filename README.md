@@ -8,14 +8,14 @@ The base image for the container is the [official Pi-Hole container](https://hub
 
 # Tags
 
-| Image | Tag | Build | Latest |
-|:------------------:|:--------------:|:-----------------:|:-----------------:|
-| ghcr.io/lizenzfass78851/docker-pihole-unbound | stable | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=stable)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) | 📌 |
-| ghcr.io/lizenzfass78851/docker-pihole-unbound | beta | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=beta)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) |  |
+| Image | Tag | Latest |
+|:------------------:|:--------------:|:-----------------:|
+| ghcr.io/lizenzfass78851/docker-pihole-unbound | stable | 📌 |
+| ghcr.io/lizenzfass78851/docker-pihole-unbound | beta | |
 
 - Matrix Build State
 
-[![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image-matrix.yml/badge.svg)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image-matrix.yml)
+[![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml)
 
 ## Usage
 
