@@ -1,4 +1,4 @@
-FROM pihole/pihole:development
+FROM pihole/pihole:nightly
 RUN apk add --no-cache \
     unbound
 
