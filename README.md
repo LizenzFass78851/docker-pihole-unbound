@@ -105,7 +105,7 @@ services:
       - TZ=${TZ}
       - FTLCONF_webserver_api_password=${FTLCONF_webserver_api_password}
       - FTLCONF_dns_revServers=${FTLCONF_dns_revServers}
-      - FTLCONF_dns_upstreams=unbound # Hardcoded to our Unbound server
+      - FTLCONF_dns_upstreams=unbound#5053 # Hardcoded to our Unbound server
       - FTLCONF_dns_dnssec=true # Enable DNSSEC
     volumes:
       - etc_pihole:/etc/pihole:rw
@@ -118,9 +118,7 @@ services:
 
   unbound:
     container_name: unbound
-    # Please select the appropriate image and comment out or remove the unnecessary image line
-    image: mvance/unbound:latest	# for amd64 devices
-    image: mvance/unbound-rpi:latest	# for armhf and arm64 devices
+    image: crazymax/unbound:latest
     networks:
       - pihole-unbound
     restart: unless-stopped
