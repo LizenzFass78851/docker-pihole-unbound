@@ -3,9 +3,11 @@
 UNBOUND_CONF="/etc/unbound/unbound.conf.d/pi-hole.conf"
 
 DAEMON="/usr/sbin/unbound"
-DAEMON_OPTS=""
+DAEMON_OPTS="-v"
 
 ANCHOR="/usr/sbin/unbound-anchor"
+
+CHECKCONF="/usr/sbin/unbound-checkconf"
 
 PIHOLE="/usr/bin/start.sh"
 
@@ -19,8 +21,11 @@ fi
 
 
 echo starting unbound
-$ANCHOR -v
-$DAEMON -d $DAEMON_OPTS -c $UNBOUND_CONF &
+capsh --user="unbound" --keep=1 -- -c "$ANCHOR -v"
+
+capsh --user="unbound" --keep=1 -- -c "$CHECKCONF $UNBOUND_CONF"
+
+capsh --user="unbound" --keep=1 -- -c "$DAEMON -d $DAEMON_OPTS -c $UNBOUND_CONF" &
 
 
 echo starting pihole
