@@ -51,7 +51,7 @@ jobs:
 
       - name: Setup QEMU
         id: qemu
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           image: tonistiigi/binfmt:${{ steps.determine-tags.outputs.QEMU_TAG }}
           platforms: all
