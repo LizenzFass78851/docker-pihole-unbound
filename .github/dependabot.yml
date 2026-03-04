@@ -8,6 +8,10 @@ updates:
       day: saturday
       time: "09:00"
     target-branch: beta
+    groups:
+      github_action-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
     directory: "/"
