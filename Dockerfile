@@ -1,4 +1,4 @@
-FROM pihole/pihole:2026.04.1
+FROM pihole/pihole:2026.05.0
 
 RUN apk add --no-cache \
     unbound openssl
