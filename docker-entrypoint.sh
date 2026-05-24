@@ -15,9 +15,6 @@ PIHOLE="/usr/bin/start.sh"
 
 # set num-threads for unbound matching the running machine
 sed -i "s/num-threads: 1/num-threads: $(nproc)/" $UNBOUND_CONF
-if [ "$USE_IPV6" == "true" ]; then
-    sed -i "s/do-ip6: no/do-ip6: yes/" $UNBOUND_CONF
-fi
 
 
 echo starting unbound

@@ -28,12 +28,17 @@ First create a `.env` file to substitute variables for your deployment.
 docker run -d \
   --name='pihole' \
   -e TZ="Europe/Berlin" \
-  -e 'TCP_PORT_53'='53' -e 'UDP_PORT_53'='53' -e 'UDP_PORT_67'='67' -e 'TCP_PORT_80'='80' -e 'TCP_PORT_443'='443' \
+  -p 53:53/tcp -p 53:53/udp -p 67:67/udp -p 123:123/udp -p 80:80/tcp -p 443:443/tcp \
   -e 'TZ'='Europe/Berlin' \
   -e 'FTLCONF_webserver_api_password'='******' \
+  -e 'FTLCONF_dns_upstreams'='127.0.0.1#5335' \
+  -e 'FTLCONF_dns_dnssec'='true' \
+  -e 'FTLCONF_dns_listeningMode'='ALL' \
   -v "$PWD/pihole/pihole/":'/etc/pihole/':'rw' \
   -v "$PWD/pihole/dnsmasq.d/":'/etc/dnsmasq.d/':'rw' \
   --cap-add=NET_ADMIN \
+  --cap-add=SYS_TIME \
+  --cap-add=SYS_NICE \
   --hostname=pihole \
   'ghcr.io/lizenzfass78851/docker-pihole-unbound:latest'
 ```
@@ -48,7 +53,6 @@ docker run -d \
 | `TZ: <Timezone>`<br/> | Set your [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) to make sure logs rotate at local midnight instead of at UTC midnight.
 | `FTLCONF_webserver_api_password: <Admin password>`<br/> | http://pi.hole/admin password. Run `docker logs pihole \| grep random` to find your random pass.
 | `FTLCONF_dns_revServers: <enabled>,<ip-address>[/<prefix-len>],<server>[#<port>],<domain>`<br/> | Enable Reverse server (former also called "conditional forwarding") feature
-| `USE_IPV6: <"true"\|"false">`<br/>| Set to `true` if ipv6 is needed for unbound (not required in most use-cases)
 
 Example `.env` file in the same directory as your `docker-compose.yaml` file:
 
@@ -87,8 +91,6 @@ There is also a variant of docker-pihole-unbound that works with separate contai
   <summary>docker-compose.yml</summary>
 
 ```yaml
-version: '2'
-
 services:
   pihole:
     container_name: pihole
@@ -103,17 +105,24 @@ services:
       - 53:53/udp   # DNS
       - 80:80/tcp   # HTTP
       - 443:443/tcp # HTTPS
+      #- 67:67/udp   # DHCP
+      #- 123:123/udp # NTP
     environment:
       - TZ=${TZ}
       - FTLCONF_webserver_api_password=${FTLCONF_webserver_api_password}
       - FTLCONF_dns_revServers=${FTLCONF_dns_revServers}
       - FTLCONF_dns_upstreams=unbound#5335 # Hardcoded to our Unbound server
       - FTLCONF_dns_dnssec=true # Enable DNSSEC
+      - FTLCONF_dns_listeningMode=ALL # If using Docker's default `bridge` network setting the dns listening mode should be set to 'ALL'
     volumes:
       - etc_pihole:/etc/pihole:rw
       - etc_pihole_dnsmasq:/etc/dnsmasq.d:rw
     networks:
       - pihole-unbound
+    cap_add:
+      #- NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+      #- SYS_TIME  # Required if you are using Pi-hole as your NTP client to be able to set the host's system time
+      - SYS_NICE  # Optional, if Pi-hole should get some more processing time
     restart: unless-stopped
     depends_on:
       - unbound
@@ -134,7 +143,7 @@ services:
             do-ip4: yes
             do-udp: yes
             do-tcp: yes
-            do-ip6: no
+            do-ip6: yes
             prefer-ip6: no
             harden-glue: yes
             harden-dnssec-stripped: yes
@@ -142,12 +151,18 @@ services:
             edns-buffer-size: 1232
             prefetch: yes
             num-threads: $(nproc 2>/dev/null || echo 1)
+            so-rcvbuf: 1m
             private-address: 192.168.0.0/16
             private-address: 169.254.0.0/16
             private-address: 172.16.0.0/12
             private-address: 10.0.0.0/8
             private-address: fd00::/8
             private-address: fe80::/10
+            private-address: 192.0.2.0/24
+            private-address: 198.51.100.0/24
+            private-address: 203.0.113.0/24
+            private-address: 255.255.255.255/32
+            private-address: 2001:db8::/32
             access-control: 10.0.0.0/8 allow
             access-control: 127.0.0.0/8 allow
             access-control: 172.16.0.0/12 allow
