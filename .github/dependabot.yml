@@ -12,6 +12,8 @@ updates:
       github_action-dependencies:
         patterns:
           - "*"
+    cooldown:
+      default-days: 0
 
   - package-ecosystem: "docker"
     directory: "/"
@@ -19,3 +21,5 @@ updates:
       interval: "daily"
       time: "15:00"
     target-branch: stable
+    cooldown:
+      default-days: 0
