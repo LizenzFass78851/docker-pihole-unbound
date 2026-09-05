@@ -12,7 +12,6 @@ The base image for the container is the [official Pi-Hole container](https://hub
 |:------------------:|:--------------:|:-----------------:|:-----------------:|
 | ghcr.io/lizenzfass78851/docker-pihole-unbound | stable | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=stable)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) | 📌 |
 | ghcr.io/lizenzfass78851/docker-pihole-unbound | beta | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=beta)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) |  |
-| ghcr.io/lizenzfass78851/docker-pihole-unbound | oldstable | [![Build and Publish Docker Image](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml/badge.svg?branch=oldstable)](https://github.com/LizenzFass78851/docker-pihole-unbound/actions/workflows/docker-image.yml) |  |
 
 - Matrix Build State
 

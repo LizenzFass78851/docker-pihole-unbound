@@ -2,9 +2,9 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [ "stable", "beta", "oldstable" ]
+    branches: [ "stable", "beta" ]
   pull_request:
-    branches: [ "stable", "beta", "oldstable" ]
+    branches: [ "stable", "beta" ]
   workflow_dispatch:
 
 concurrency:
@@ -34,25 +34,8 @@ jobs:
       - name: Checkout Dockerfile
         uses: actions/checkout@v7
 
-      - name: Determine Tags
-        shell: bash
-        id: determine-tags
-        run: |
-          if [ -e Dockerfile ]; then
-            DOCKERFILE_TAG=$(grep -oP '(?<=^FROM pihole/pihole:).*' Dockerfile)
-            if [[ "$DOCKERFILE_TAG" < "2024.07.00" ]]; then
-              echo "QEMU_TAG=qemu-v7.0.0-28" >> $GITHUB_OUTPUT
-              echo "PLATRORMS=linux/amd64,linux/386,linux/arm64,linux/arm/v7" >> $GITHUB_OUTPUT
-            else
-              echo "QEMU_TAG=latest" >> $GITHUB_OUTPUT
-              echo "PLATRORMS=linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6,linux/riscv64" >> $GITHUB_OUTPUT
-            fi
-          fi
-
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v4
-        with:
-          image: tonistiigi/binfmt:${{ steps.determine-tags.outputs.QEMU_TAG }}
       
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -80,7 +63,7 @@ jobs:
           build-args: GH_TOKEN=${{ github.token }}
           context: .
           file: ./Dockerfile
-          platforms:  ${{ steps.determine-tags.outputs.PLATRORMS }}
+          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6,linux/riscv64
           cache-to: ${{ github.event_name != 'pull_request' && 'type=gha,mode=max,ignore-error=true' || '' }}
           cache-from: ${{ github.event_name != 'pull_request' && 'type=gha' || '' }}
           push: ${{ github.event_name != 'pull_request' }}
