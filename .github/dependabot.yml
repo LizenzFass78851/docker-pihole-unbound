@@ -7,7 +7,6 @@ updates:
       interval: "weekly"
       day: saturday
       time: "09:00"
-    target-branch: beta
     groups:
       github_action-dependencies:
         patterns:
@@ -20,6 +19,5 @@ updates:
     schedule:
       interval: "daily"
       time: "15:00"
-    target-branch: stable
     cooldown:
       default-days: 0
