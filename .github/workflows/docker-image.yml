@@ -7,6 +7,7 @@ on:
     branches: [ "main" ]
   schedule:
     - cron: '20 14 * * 2'
+      timezone: "UTC"
   workflow_dispatch:
 
 concurrency:
