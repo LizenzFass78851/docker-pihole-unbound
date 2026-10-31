@@ -1,6 +1,6 @@
 ARG BUILD_CHANNEL=stable
 
-FROM pihole/pihole:2026.10.0 AS stable
+FROM pihole/pihole:2026.10.1 AS stable
 FROM pihole/pihole:nightly   AS beta
 
 RUN apk add --no-cache \
